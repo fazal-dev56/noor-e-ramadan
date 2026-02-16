@@ -7,7 +7,7 @@ interface LanternProps {
 
 export const Lantern: React.FC<LanternProps> = ({ className, delay }) => {
   return (
-    <div className={`absolute pointer-events-none animate-float ${className}`} style={{ animationDelay: delay }}>
+    <div className={`absolute pointer-events-none animate-swing origin-top ${className}`} style={{ animationDelay: delay }}>
       <svg
         width="100"
         height="180"

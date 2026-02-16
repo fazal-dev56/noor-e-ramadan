@@ -11,6 +11,44 @@ const App: React.FC = () => {
   const [data, setData] = useState<AlAdhanResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+    // Wake Lock for Screen
+  useEffect(() => {
+    let wakeLock: any = null;
+
+    const requestWakeLock = async () => {
+      if ('wakeLock' in navigator) {
+        try {
+          // Cast navigator to any because wakeLock types might not be in the default TS lib
+          wakeLock = await (navigator as any).wakeLock.request('screen');
+          console.log('Wake Lock is active');
+        } catch (err: any) {
+          console.error(`${err.name}, ${err.message}`);
+        }
+      }
+    };
+
+    // Request wake lock on mount
+    requestWakeLock();
+
+    // Re-request wake lock if visibility changes (e.g. user switches tabs and comes back)
+    const handleVisibilityChange = async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (wakeLock !== null) {
+        wakeLock.release().then(() => {
+          wakeLock = null;
+        });
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

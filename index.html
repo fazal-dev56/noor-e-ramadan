@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Noor-e-Ramadan</title>
+    <title>As-Sawm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,40 +16,40 @@
         theme: {
           extend: {
             fontFamily: {
-              serif: ['"Playfair Display"', "serif"],
-              sans: ['"Quicksand"', "sans-serif"],
-              arabic: ['"Amiri"', "serif"],
+              serif: ['"Playfair Display"', 'serif'],
+              sans: ['"Quicksand"', 'sans-serif'],
+              arabic: ['"Amiri"', 'serif'],
             },
             colors: {
               gold: {
-                100: "#F9F1D8",
-                200: "#F0DEAA",
-                300: "#E6CB7D",
-                400: "#DDB753",
-                500: "#D4A32B",
-                600: "#AA8222",
-                700: "#80621A",
-                800: "#554111",
-                900: "#2B2009",
-              },
+                100: '#F9F1D8',
+                200: '#F0DEAA',
+                300: '#E6CB7D',
+                400: '#DDB753',
+                500: '#D4A32B',
+                600: '#AA8222',
+                700: '#80621A',
+                800: '#554111',
+                900: '#2B2009',
+              }
             },
             animation: {
-              float: "float 6s ease-in-out infinite",
-              twinkle: "twinkle 4s ease-in-out infinite",
+              'swing': 'swing 6s ease-in-out infinite',
+              'twinkle': 'twinkle 4s ease-in-out infinite',
             },
             keyframes: {
-              float: {
-                "0%, 100%": { transform: "translateY(0)" },
-                "50%": { transform: "translateY(-20px)" },
+              swing: {
+                '0%, 100%': { transform: 'rotate(5deg)' },
+                '50%': { transform: 'rotate(-5deg)' },
               },
               twinkle: {
-                "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
-                "50%": { opacity: "1", transform: "scale(1.2)" },
-              },
-            },
-          },
-        },
-      };
+                '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
+                '50%': { opacity: '1', transform: 'scale(1.2)' },
+              }
+            }
+          }
+        }
+      }
     </script>
     <style>
       /* Custom scrollbar for cleanliness */
