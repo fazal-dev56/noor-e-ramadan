@@ -51,7 +51,7 @@ export const TimeWidget: React.FC<TimeWidgetProps> = ({ data, loading }) => {
   };
 
   return (
-    <div className="grid grid-cols-2 md:flex md:flex-row gap-3 md:gap-4 justify-center items-stretch w-full max-w-3xl mx-auto mb-4 md:mb-12 px-0 md:px-4">
+    <div className="grid grid-cols-2 md:flex md:flex-row gap-3 md:gap-4 justify-center items-stretch w-full max-w-3xl mx-auto mb-2 md:mb-6 px-0 md:px-4">
       
       {/* Time & Gregorian Date Card */}
       <div className="flex-1 bg-gradient-to-br from-amber-900/80 to-black/80 border border-amber-500/30 rounded-xl md:rounded-2xl p-3 md:p-6 shadow-[0_0_20px_rgba(217,119,6,0.15)] flex flex-col justify-center items-center relative overflow-hidden group">

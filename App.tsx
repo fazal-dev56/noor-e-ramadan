@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Lantern } from './components/Lantern';
 import { HeaderDisplay } from './components/HeaderDisplay';
 import { TimeWidget } from './components/TimeWidget';
+import { PrayerTimes } from './components/PrayerTimes';
 import { DuaSection } from './components/DuaSection';
 import { getTimingsByCity } from './services/alAdhanService';
 import { AlAdhanResponse } from './types';
@@ -58,7 +59,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content Container - Flex Column to fill height without scroll */}
-      <main className="relative z-10 container mx-auto h-full flex flex-col justify-center md:justify-start items-center pt-16 md:pt-40 pb-4 px-4 gap-2 md:gap-8">
+      <main className="relative z-10 container mx-auto h-full flex flex-col justify-center md:justify-start items-center pt-16 md:pt-40 pb-4 px-4 gap-2 md:gap-4">
         
         {/* Islamic Date Header */}
         <div className="flex-none">
@@ -70,9 +71,14 @@ const App: React.FC = () => {
             <TimeWidget data={data} loading={loading} />
         </div>
 
+        {/* Prayer Times Horizontal List */}
+        <div className="w-full flex-none">
+            <PrayerTimes data={data} loading={loading} />
+        </div>
+
         {/* Dua Tabs Section - Takes remaining space */}
         <div className="w-full flex-1 min-h-0 flex flex-col justify-center">
-            <DuaSection />
+            <DuaSection data={data} />
         </div>
 
         {/* Footer / Crescent Moon Decoration - Made smaller/subtle */}
