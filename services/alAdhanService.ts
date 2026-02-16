@@ -8,7 +8,7 @@ export const getTimingsByCity = async (
 ): Promise<AlAdhanResponse> => {
   try {
     const today = new Date();
-    const dateStr = `${today.getDate() +2 }-${today.getMonth() + 1}-${today.getFullYear()}`;
+    const dateStr = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
 
     // Using timingsByCity endpoint
     const response = await fetch(
