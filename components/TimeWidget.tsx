@@ -65,7 +65,7 @@ export const TimeWidget: React.FC<TimeWidgetProps> = ({ data, loading }) => {
           <span className="text-sm md:text-3xl text-amber-500 ml-1 font-serif">{period}</span>
         </div>
         <div className="text-amber-200/80 mt-1 md:mt-2 font-medium text-xs md:text-lg z-10 text-center leading-tight">
-          {date.gregorian.weekday.en}, {date.gregorian.day} {date.gregorian.month.en}
+          {date.gregorian.weekday.en.substring(0, 3)}, {date.gregorian.day} {date.gregorian.month.en}
         </div>
       </div>
 

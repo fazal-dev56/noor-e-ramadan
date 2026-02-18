@@ -47,6 +47,7 @@ export interface AlAdhanResponse {
           number: number;
           en: string;
           ar: string;
+          days: number;
         };
         year: string;
         designation: {
