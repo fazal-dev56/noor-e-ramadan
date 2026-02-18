@@ -4,6 +4,7 @@ import { HeaderDisplay } from './components/HeaderDisplay';
 import { TimeWidget } from './components/TimeWidget';
 import { PrayerTimes } from './components/PrayerTimes';
 import { DuaSection } from './components/DuaSection';
+import { InstallPwaButtons } from './components/InstallPwaButtons';
 import { getTimingsByCity } from './services/alAdhanService';
 import { AlAdhanResponse } from './types';
 
@@ -11,7 +12,7 @@ const App: React.FC = () => {
   const [data, setData] = useState<AlAdhanResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-    // Wake Lock for Screen
+  // Wake Lock for Screen
   useEffect(() => {
     let wakeLock: any = null;
 
@@ -97,7 +98,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Main Content Container - Flex Column to fill height without scroll */}
-      <main className="relative z-10 container mx-auto h-full flex flex-col justify-center md:justify-start items-center pt-16 md:pt-40 pb-4 px-4 gap-2 md:gap-4">
+      <main className="relative z-10 container mx-auto h-full flex flex-col justify-start items-center pt-16 md:pt-40 pb-2 px-4 gap-2 md:gap-4">
         
         {/* Islamic Date Header */}
         <div className="flex-none">
@@ -114,10 +115,13 @@ const App: React.FC = () => {
             <PrayerTimes data={data} loading={loading} />
         </div>
 
-        {/* Dua Tabs Section - Takes remaining space */}
-        <div className="w-full flex-1 min-h-0 flex flex-col justify-center">
+        {/* Dua Tabs Section - Takes remaining space and aligns to top */}
+        <div className="w-full flex-1 min-h-0 flex flex-col justify-start mt-2">
             <DuaSection data={data} />
         </div>
+        
+        {/* Install Buttons - Only visible on mobile via internal logic/css */}
+        <InstallPwaButtons />
 
         {/* Footer / Crescent Moon Decoration - Made smaller/subtle */}
         <div className="fixed bottom-0 left-0 -mb-10 -ml-10 md:-mb-20 md:-ml-20 pointer-events-none opacity-30 mix-blend-screen z-0">
