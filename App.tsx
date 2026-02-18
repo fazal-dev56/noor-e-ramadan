@@ -13,7 +13,25 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showLanterns, setShowLanterns] = useState(false);
 
-  // Wake Lock for Screen
+  // Helper function to enter fullscreen
+  const enterFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        const elem = document.documentElement as any;
+        if (elem.requestFullscreen) {
+          await elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+          await elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+          await elem.msRequestFullscreen();
+        }
+      }
+    } catch (err) {
+      console.log('Fullscreen request failed (likely needs user gesture):', err);
+    }
+  };
+
+  // Wake Lock and Fullscreen Logic
   useEffect(() => {
     let wakeLock: any = null;
 
@@ -44,17 +62,26 @@ const App: React.FC = () => {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Also try to request on first user interaction if not already active
+    // Interaction handler to trigger things that require user gestures (Audio, Fullscreen, WakeLock)
     const handleInteraction = () => {
         if (!wakeLock) {
             requestWakeLock();
         }
+        // Trigger fullscreen on first interaction
+        enterFullscreen();
     };
+    
+    // Attempt fullscreen after 2 seconds (note: browsers may block this without interaction)
+    const fsTimer = setTimeout(() => {
+      enterFullscreen();
+    }, 2000);
+
     window.addEventListener('click', handleInteraction, { once: true });
     window.addEventListener('touchstart', handleInteraction, { once: true });
 
 
     return () => {
+      clearTimeout(fsTimer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('click', handleInteraction);
       window.removeEventListener('touchstart', handleInteraction);
@@ -96,6 +123,8 @@ const App: React.FC = () => {
     setShowLanterns(false);
     setTimeout(() => setShowLanterns(true), 3000);
     fetchData();
+    // Also try fullscreen again on refresh button click
+    enterFullscreen();
   };
 
   return (
