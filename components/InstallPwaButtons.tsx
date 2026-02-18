@@ -62,7 +62,7 @@ export const InstallPwaButtons: React.FC = () => {
   if (!isMobile || isStandalone) return null;
 
   return (
-    <div className="w-full flex-none px-4 pb-1 pt-1 z-30 md:hidden relative">
+    <div className="w-full flex-none px-4 z-30 relative">
       
       {/* Instructions Overlay */}
       <div 

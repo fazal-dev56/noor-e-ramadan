@@ -71,4 +71,4 @@ export interface AlAdhanResponse {
   };
 }
 
-export type TabType = 'sehri' | 'aftari' | 'note';
+export type TabType = 'sehri' | 'aftari' | 'about';

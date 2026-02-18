@@ -4,6 +4,7 @@ import { HeaderDisplay } from './components/HeaderDisplay';
 import { TimeWidget } from './components/TimeWidget';
 import { PrayerTimes } from './components/PrayerTimes';
 import { DuaSection } from './components/DuaSection';
+import { UrgentCountdown } from './components/UrgentCountdown';
 import { InstallPwaButtons } from './components/InstallPwaButtons';
 import { getTimingsByCity } from './services/alAdhanService';
 import { AlAdhanResponse } from './types';
@@ -12,6 +13,7 @@ const App: React.FC = () => {
   const [data, setData] = useState<AlAdhanResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLanterns, setShowLanterns] = useState(false);
+  const [isDuaOpen, setIsDuaOpen] = useState(false);
 
   // Helper function to enter fullscreen
   const enterFullscreen = async () => {
@@ -188,13 +190,19 @@ const App: React.FC = () => {
             <PrayerTimes data={data} loading={loading} />
         </div>
 
-        {/* Dua Tabs Section - Takes remaining space and aligns to top */}
-        <div className="w-full flex-1 min-h-0 flex flex-col justify-start mt-2">
-            <DuaSection data={data} />
+        {/* Dua Tabs Section - Expands to fill space if open, otherwise flex-none */}
+        <div className={`w-full flex flex-col justify-start mt-2 relative transition-all duration-300 ${isDuaOpen ? 'flex-1' : 'flex-none'}`}>
+            <DuaSection data={data} onOpenChange={setIsDuaOpen} />
         </div>
         
-        {/* Install Buttons - Only visible on mobile via internal logic/css */}
-        <InstallPwaButtons />
+        {/* Urgent Countdown - Appears between Dua Buttons and Install Buttons */}
+        {/* This will take up remaining space if visible (it has flex-1 inside) */}
+        <UrgentCountdown data={data} hidden={isDuaOpen} />
+        
+        {/* Install Buttons - Pushed to bottom */}
+        <div className="w-full mt-auto md:hidden pb-4">
+             <InstallPwaButtons />
+        </div>
 
         {/* Footer / Crescent Moon Decoration - Made smaller/subtle */}
         <div className="fixed bottom-0 left-0 -mb-10 -ml-10 md:-mb-20 md:-ml-20 pointer-events-none opacity-30 mix-blend-screen z-0">
