@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>As-Sawm</title>
-    
+
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
@@ -71,6 +71,14 @@
         background: #80621a;
         border-radius: 3px;
       }
+      /* Utility class to hide scrollbar but allow scrolling */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
     </style>
     <script type="importmap">
       {
@@ -81,6 +89,15 @@
         }
       }
     </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(registration => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed: ', err));
+    });
+  }
+</script>
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body class="bg-black text-white overflow-x-hidden">
