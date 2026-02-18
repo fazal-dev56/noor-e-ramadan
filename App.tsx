@@ -23,7 +23,10 @@ const App: React.FC = () => {
           wakeLock = await (navigator as any).wakeLock.request('screen');
           console.log('Wake Lock is active');
         } catch (err: any) {
-          console.error(`${err.name}, ${err.message}`);
+          // Silently ignore NotAllowedError as it often happens due to permissions policy or lack of user gesture
+          if (err.name !== 'NotAllowedError') {
+             console.warn(`Wake Lock failed: ${err.message}`);
+          }
         }
       }
     };
@@ -40,8 +43,21 @@ const App: React.FC = () => {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    // Also try to request on first user interaction if not already active
+    const handleInteraction = () => {
+        if (!wakeLock) {
+            requestWakeLock();
+        }
+    };
+    window.addEventListener('click', handleInteraction, { once: true });
+    window.addEventListener('touchstart', handleInteraction, { once: true });
+
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      
       if (wakeLock !== null) {
         wakeLock.release().then(() => {
           wakeLock = null;
