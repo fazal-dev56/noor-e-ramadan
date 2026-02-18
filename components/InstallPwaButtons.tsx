@@ -15,7 +15,11 @@ export const InstallPwaButtons: React.FC = () => {
 
     // Check if app is running in standalone mode (installed)
     const checkStandalone = () => {
-        const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+        const isStandaloneMode = 
+          window.matchMedia('(display-mode: standalone)').matches || 
+          window.matchMedia('(display-mode: fullscreen)').matches || 
+          window.matchMedia('(display-mode: minimal-ui)').matches || 
+          (window.navigator as any).standalone === true;
         setIsStandalone(isStandaloneMode);
     };
 
@@ -23,8 +27,12 @@ export const InstallPwaButtons: React.FC = () => {
     checkStandalone();
     window.addEventListener('resize', checkMobile);
     
-    // Listen for display mode changes
-    window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
+    // Listen for display mode changes (covers standalone, fullscreen, minimal-ui)
+    const mediaQueryStandalone = window.matchMedia('(display-mode: standalone)');
+    const mediaQueryFullscreen = window.matchMedia('(display-mode: fullscreen)');
+    
+    mediaQueryStandalone.addEventListener('change', checkStandalone);
+    mediaQueryFullscreen.addEventListener('change', checkStandalone);
 
     const handler = (e: any) => {
       // Prevent the mini-infobar from appearing on mobile
@@ -38,7 +46,8 @@ export const InstallPwaButtons: React.FC = () => {
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('resize', checkMobile);
-      window.matchMedia('(display-mode: standalone)').removeEventListener('change', checkStandalone);
+      mediaQueryStandalone.removeEventListener('change', checkStandalone);
+      mediaQueryFullscreen.removeEventListener('change', checkStandalone);
     };
   }, []);
 
@@ -62,7 +71,7 @@ export const InstallPwaButtons: React.FC = () => {
   if (!isMobile || isStandalone) return null;
 
   return (
-    <div className="w-full flex-none px-4 z-30 relative">
+    <div className="w-full flex-none px-4 z-30 relative mt-auto md:hidden pb-4">
       
       {/* Instructions Overlay */}
       <div 

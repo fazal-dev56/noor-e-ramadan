@@ -200,9 +200,7 @@ const App: React.FC = () => {
         <UrgentCountdown data={data} hidden={isDuaOpen} />
         
         {/* Install Buttons - Pushed to bottom */}
-        <div className="w-full mt-auto md:hidden pb-4">
-             <InstallPwaButtons />
-        </div>
+        <InstallPwaButtons />
 
         {/* Footer / Crescent Moon Decoration - Made smaller/subtle */}
         <div className="fixed bottom-0 left-0 -mb-10 -ml-10 md:-mb-20 md:-ml-20 pointer-events-none opacity-30 mix-blend-screen z-0">
