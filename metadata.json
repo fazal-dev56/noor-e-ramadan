@@ -1,4 +1,7 @@
 {
   "name": "As-Sawm",
-  "description": "A beautiful, Islamic-themed dashboard for Bahawalpur displaying prayer times, Hijri date, and Duas with a premium aesthetic."
+  "description": "A beautiful, Islamic-themed dashboard for Bahawalpur displaying prayer times, Hijri date, and Duas with a premium aesthetic.",
+  "requestFramePermissions": [
+    "screen-wake-lock"
+  ]
 }

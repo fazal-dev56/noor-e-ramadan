@@ -79,7 +79,7 @@ export const DuaSection: React.FC<DuaSectionProps> = ({ data }) => {
 
     if (typeof contentData === 'string') {
       return (
-        <div className="text-center h-full flex flex-col justify-center items-center p-2 md:p-4">
+        <div className="text-center flex flex-col justify-center items-center h-full">
           <h3 className="text-lg md:text-2xl font-serif font-bold text-amber-900 mb-2 md:mb-4 border-b-2 border-amber-900/20 pb-1 md:pb-2">Ramadan Note</h3>
           <p className="text-sm md:text-xl leading-relaxed font-medium italic text-amber-800">"{contentData}"</p>
         </div>
@@ -101,7 +101,7 @@ export const DuaSection: React.FC<DuaSectionProps> = ({ data }) => {
     }
 
     return (
-      <div className="text-center space-y-1 md:space-y-4">
+      <div className="text-center space-y-1 md:space-y-4 pb-4">
         
         {/* Time Display for Sehri/Iftar */}
         {timeDisplay && (
@@ -122,10 +122,10 @@ export const DuaSection: React.FC<DuaSectionProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-0 md:px-4 pb-0 md:pb-20 flex flex-col items-center">
+    <div className="w-full max-w-3xl mx-auto px-0 md:px-4 flex flex-col h-full">
       
-      {/* Tabs */}
-      <div className="w-full flex justify-between items-center gap-2 md:gap-4 mb-3 md:mb-6 relative px-4 md:px-0">
+      {/* Tabs - Fixed height */}
+      <div className="flex-none w-full flex justify-between items-center gap-2 md:gap-4 mb-3 md:mb-4 relative px-4 md:px-0">
         {(['sehri', 'aftari', 'note'] as TabType[]).map((tab) => (
           <button
             key={tab}
@@ -143,11 +143,11 @@ export const DuaSection: React.FC<DuaSectionProps> = ({ data }) => {
         ))}
       </div>
 
-      {/* Content Box with Arrow - Animated container */}
+      {/* Content Box - Fills remaining vertical space */}
       <div 
         className={`
-          w-full relative px-2 md:px-0 transition-all duration-700 ease-in-out origin-top
-          ${isOpen ? 'opacity-100 max-h-[600px] translate-y-0 scale-100' : 'opacity-0 max-h-0 -translate-y-4 scale-95 pointer-events-none'}
+          flex-1 min-h-0 relative transition-all duration-700 ease-in-out w-full
+          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
         `}
       >
         {/* Animated Arrow */}
@@ -155,16 +155,18 @@ export const DuaSection: React.FC<DuaSectionProps> = ({ data }) => {
           className={`absolute -top-2 md:-top-3 w-4 h-4 md:w-6 md:h-6 bg-amber-500 transform rotate-45 transition-all duration-500 ease-in-out border-t border-l border-amber-400 shadow-[-2px_-2px_4px_rgba(0,0,0,0.1)] z-20 -ml-2 md:-ml-3 ${getArrowPosition()}`}
         ></div>
 
-        {/* Card Body */}
-        <div className="bg-gradient-to-b from-amber-500 to-amber-600 rounded-xl md:rounded-2xl p-0.5 md:p-1 shadow-2xl relative z-10 transition-all duration-500">
-           <div className="bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg md:rounded-xl p-3 md:p-8 min-h-[160px] md:min-h-[300px] flex items-center justify-center shadow-inner">
-             <div 
-               key={activeTab} 
-               className="w-full animate-fadeIn transition-opacity duration-500"
-             >
-               {renderContent()}
-             </div>
-           </div>
+        {/* Card Body - Absolute positioning to fill the flex-1 parent properly */}
+        <div className="absolute inset-0 pb-4 md:pb-6 px-2 md:px-0">
+            <div className="h-full bg-gradient-to-b from-amber-500 to-amber-600 rounded-xl md:rounded-2xl p-0.5 md:p-1 shadow-2xl flex flex-col">
+                <div className="flex-1 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg md:rounded-xl shadow-inner overflow-hidden flex flex-col">
+                    {/* Scrollable Content Area */}
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-3 md:p-8">
+                        <div key={activeTab} className="animate-fadeIn">
+                            {renderContent()}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
     </div>
