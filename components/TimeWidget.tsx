@@ -4,9 +4,11 @@ import { AlAdhanResponse } from '../types';
 interface TimeWidgetProps {
   data: AlAdhanResponse | null;
   loading: boolean;
+  locationName: string;
+  onLocationClick: () => void;
 }
 
-export const TimeWidget: React.FC<TimeWidgetProps> = ({ data, loading }) => {
+export const TimeWidget: React.FC<TimeWidgetProps> = ({ data, loading, locationName, onLocationClick }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -72,11 +74,20 @@ export const TimeWidget: React.FC<TimeWidgetProps> = ({ data, loading }) => {
       {/* Location & Sun Info Card */}
       <div className="flex-1 bg-gradient-to-bl from-amber-100/90 to-amber-200/90 text-amber-900 rounded-xl md:rounded-2xl p-3 md:p-6 shadow-[0_0_20px_rgba(255,255,255,0.1)] flex flex-col justify-center md:justify-between relative overflow-hidden gap-2 md:gap-0">
         
-        {/* City Badge - Compact for Mobile */}
+        {/* City Badge - Clickable for Geolocation */}
         <div className="flex justify-between items-center md:items-start md:mb-4">
-            <div className="bg-amber-900/10 px-2 py-0.5 md:px-3 md:py-1 rounded-full border border-amber-900/20">
-                <span className="font-bold text-[10px] md:text-sm uppercase tracking-wide">Bahawalpur</span>
-            </div>
+            <button 
+              onClick={onLocationClick}
+              className="group/btn bg-amber-900/10 hover:bg-amber-900/20 active:bg-amber-900/30 transition-all px-2 py-0.5 md:px-3 md:py-1 rounded-full border border-amber-900/20 cursor-pointer flex items-center gap-1"
+              title="Click to use current location"
+            >
+                {locationName !== 'Bahawalpur' && (
+                  <span className="text-[8px] md:text-xs">📍</span>
+                )}
+                <span className="font-bold text-[10px] md:text-sm uppercase tracking-wide group-hover/btn:text-amber-950 transition-colors">
+                  {locationName}
+                </span>
+            </button>
             <svg className="w-4 h-4 md:w-8 md:h-8 text-amber-600 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>

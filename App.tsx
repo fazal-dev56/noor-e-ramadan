@@ -6,7 +6,7 @@ import { PrayerTimes } from './components/PrayerTimes';
 import { DuaSection } from './components/DuaSection';
 import { UrgentCountdown } from './components/UrgentCountdown';
 import { InstallPwaButtons } from './components/InstallPwaButtons';
-import { getTimingsByCity } from './services/alAdhanService';
+import { getTimingsByCity, getTimingsByCoordinates } from './services/alAdhanService';
 import { AlAdhanResponse } from './types';
 
 const App: React.FC = () => {
@@ -14,6 +14,10 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showLanterns, setShowLanterns] = useState(false);
   const [isDuaOpen, setIsDuaOpen] = useState(false);
+  
+  // Location state
+  const [locationName, setLocationName] = useState('Bahawalpur');
+  const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null);
 
   // Helper function to enter fullscreen
   const enterFullscreen = async () => {
@@ -107,14 +111,19 @@ const App: React.FC = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await getTimingsByCity('Bahawalpur', 'Pakistan');
+      let result;
+      if (coords) {
+         result = await getTimingsByCoordinates(coords.lat, coords.lng);
+      } else {
+         result = await getTimingsByCity('Bahawalpur', 'Pakistan');
+      }
       setData(result);
     } catch (error) {
       console.error("Failed to load data");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [coords]);
 
   useEffect(() => {
     fetchData();
@@ -127,6 +136,41 @@ const App: React.FC = () => {
     fetchData();
     // Also try fullscreen again on refresh button click
     enterFullscreen();
+  };
+
+  const handleLocationClick = () => {
+    // If already using coordinates, maybe let them switch back or refresh location? 
+    // For now, let's just refresh current location or ask permission if not set.
+    
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoords({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        setLocationName("Current Location");
+      },
+      (error) => {
+        setLoading(false); // Stop loading if error
+        console.error("Error getting location", error);
+        let msg = "Unable to retrieve your location.";
+        if (error.code === error.PERMISSION_DENIED) {
+            msg = "Location permission denied. Please allow location access to use this feature.";
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+            msg = "Location information is unavailable.";
+        } else if (error.code === error.TIMEOUT) {
+            msg = "The request to get user location timed out.";
+        }
+        alert(msg);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   return (
@@ -182,7 +226,12 @@ const App: React.FC = () => {
 
         {/* Time and Location */}
         <div className="w-full flex-none">
-            <TimeWidget data={data} loading={loading} />
+            <TimeWidget 
+              data={data} 
+              loading={loading} 
+              locationName={locationName} 
+              onLocationClick={handleLocationClick} 
+            />
         </div>
 
         {/* Prayer Times Horizontal List */}
