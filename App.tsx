@@ -6,7 +6,7 @@ import { PrayerTimes } from './components/PrayerTimes';
 import { DuaSection } from './components/DuaSection';
 import { UrgentCountdown } from './components/UrgentCountdown';
 import { InstallPwaButtons } from './components/InstallPwaButtons';
-import { getTimingsByCity, getTimingsByCoordinates } from './services/alAdhanService';
+import { getTimingsByCity, getTimingsByCoordinates, getCityNameFromCoordinates } from './services/alAdhanService';
 import { AlAdhanResponse } from './types';
 
 const App: React.FC = () => {
@@ -139,9 +139,6 @@ const App: React.FC = () => {
   };
 
   const handleLocationClick = () => {
-    // If already using coordinates, maybe let them switch back or refresh location? 
-    // For now, let's just refresh current location or ask permission if not set.
-    
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       return;
@@ -149,12 +146,16 @@ const App: React.FC = () => {
 
     setLoading(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setCoords({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        });
-        setLocationName("Current Location");
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        setCoords({ lat, lng });
+        
+        // Optimistically set location name or show loading state for name if preferred
+        // But here we wait for the reverse geocoding
+        const city = await getCityNameFromCoordinates(lat, lng);
+        setLocationName(city);
       },
       (error) => {
         setLoading(false); // Stop loading if error

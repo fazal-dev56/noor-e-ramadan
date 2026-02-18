@@ -45,3 +45,31 @@ export const getTimingsByCoordinates = async (lat: number, lng: number): Promise
     throw error;
   }
 };
+
+export const getCityNameFromCoordinates = async (lat: number, lng: number): Promise<string> => {
+  try {
+    // Using OpenStreetMap Nominatim API for reverse geocoding
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`
+    );
+
+    if (!response.ok) {
+      return "Current Location";
+    }
+
+    const data = await response.json();
+    const address = data.address;
+    
+    // Try to find the most relevant city name
+    return address.city || 
+           address.town || 
+           address.village || 
+           address.suburb || 
+           address.county || 
+           address.state || 
+           "Current Location";
+  } catch (error) {
+    console.error("Reverse geocoding failed:", error);
+    return "Current Location";
+  }
+};
