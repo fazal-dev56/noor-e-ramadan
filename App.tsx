@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Lantern } from './components/Lantern';
 import { HeaderDisplay } from './components/HeaderDisplay';
 import { TimeWidget } from './components/TimeWidget';
@@ -11,6 +11,7 @@ import { AlAdhanResponse } from './types';
 const App: React.FC = () => {
   const [data, setData] = useState<AlAdhanResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showLanterns, setShowLanterns] = useState(false);
 
   // Wake Lock for Screen
   useEffect(() => {
@@ -66,20 +67,36 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Show lanterns after delay
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getTimingsByCity('Bahawalpur', 'Pakistan');
-        setData(result);
-      } catch (error) {
-        console.error("Failed to load data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    const timer = setTimeout(() => {
+      setShowLanterns(true);
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await getTimingsByCity('Bahawalpur', 'Pakistan');
+      setData(result);
+    } catch (error) {
+      console.error("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleRefresh = () => {
+    // Re-trigger lanterns animation for that "reload" feel
+    setShowLanterns(false);
+    setTimeout(() => setShowLanterns(true), 3000);
+    fetchData();
+  };
 
   return (
     <div className="h-[100dvh] w-full relative overflow-hidden bg-slate-950 font-sans text-gray-100 selection:bg-amber-500 selection:text-black">
@@ -106,8 +123,19 @@ const App: React.FC = () => {
          ))}
       </div>
 
-      {/* Hanging Lanterns - Adjusted for compact view */}
-      <div className="absolute top-0 w-full flex justify-between px-4 md:px-20 z-10 pointer-events-none">
+      {/* Manual Refresh Button */}
+      <button 
+        onClick={handleRefresh}
+        className="absolute top-4 right-4 z-50 p-2 md:p-3 bg-black/20 hover:bg-amber-900/40 backdrop-blur-md rounded-full text-amber-500/70 hover:text-amber-400 transition-all border border-white/5 active:scale-95 group"
+        aria-label="Refresh Data"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </button>
+
+      {/* Hanging Lanterns - Adjusted for compact view with Fade In */}
+      <div className={`absolute top-0 w-full flex justify-between px-4 md:px-20 z-10 pointer-events-none transition-opacity duration-1000 ease-in-out ${showLanterns ? 'opacity-100' : 'opacity-0'}`}>
         <Lantern className="left-4 md:left-32 scale-50 md:scale-100 -mt-2 md:mt-0" delay="0s" />
         <Lantern className="right-4 md:right-32 scale-75 md:scale-110 -mt-8 md:-mt-10" delay="2s" />
         <Lantern className="hidden md:block left-1/2 -ml-12 scale-125 -mt-4" delay="1s" />
