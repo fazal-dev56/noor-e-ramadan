@@ -4,6 +4,7 @@ export const InstallPwaButtons: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     // Basic mobile detection
@@ -11,8 +12,19 @@ export const InstallPwaButtons: React.FC = () => {
       const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
       setIsMobile(isMobileDevice);
     };
+
+    // Check if app is running in standalone mode (installed)
+    const checkStandalone = () => {
+        const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+        setIsStandalone(isStandaloneMode);
+    };
+
     checkMobile();
+    checkStandalone();
     window.addEventListener('resize', checkMobile);
+    
+    // Listen for display mode changes
+    window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
 
     const handler = (e: any) => {
       // Prevent the mini-infobar from appearing on mobile
@@ -26,6 +38,7 @@ export const InstallPwaButtons: React.FC = () => {
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('resize', checkMobile);
+      window.matchMedia('(display-mode: standalone)').removeEventListener('change', checkStandalone);
     };
   }, []);
 
@@ -45,8 +58,8 @@ export const InstallPwaButtons: React.FC = () => {
     }
   };
 
-  // Only render on mobile
-  if (!isMobile) return null;
+  // Don't render if not mobile OR if already installed
+  if (!isMobile || isStandalone) return null;
 
   return (
     <div className="w-full flex-none px-4 pb-1 pt-1 z-30 md:hidden relative">
